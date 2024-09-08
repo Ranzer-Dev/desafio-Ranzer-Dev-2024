@@ -76,41 +76,47 @@ let recintosAtuais = [
 class RecintosZoo {
 
     analisaRecintos(animal, quantidade) {
-
-        ocupacaoAtual = []
-        espacoOcupado1 = 0
-        espacoDisponivel1 = 0
-        animaisDiferentes1 = []
-        quantidadeDeAnimaisDiferentes11 = 0
-
-        for (let i = 0; i < recintosAtuais.length; i++) {
-            ocupacaoAtual[i] = recintosAtuais[i]['animaisExistentes']
-        }
-        for (let n = 0; n < ocupacaoAtual[0].length; n++) {
-            animaisDiferentes1[n] = ocupacaoAtual[0][n]['animal']
-            espacoOcupado1 = Number(espacoOcupado1 + (ocupacaoAtual[0][n]['tamanho']))
-        }
-        quantidadeDeAnimaisDiferentes11 = Array.from(new Set(animaisDiferentes1)).length - 1
-        if (quantidadeDeAnimaisDiferentes11 != 0) {
-            espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1 - 1
-        } else {
-            espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1
-        }
-
-        let podeSerTratado = animais.some(animais => animais.animal == animal);
-
-        if (podeSerTratado == false) {
-            console.log("Animal inválido");
-        } else if (podeSerTratado == true) {
-            if (quantidade < 1) {
-                console.log("Quantidade inválida");
+    
+            let podeSerTratado = animais.some(animais => animais.animal == animal);
+                
+            if (podeSerTratado == false) {
+                return { erro:"Animal inválido"};
+            } else if (podeSerTratado == true) {
+                if (quantidade < 1) {
+                    return { erro: "Quantidade inválida" }
+                }
+                if (animal == 'Macaco' && quantidade > 0) {
+                    animal = animais[3]
+                    tamanho = animal['tamanho'] * quantidade
+                        if (recintosAtuais[0]['bioma'] == 'savana' && tamanho <= espacoDisponivel1) {
+                            for(let i = 1; i <= quantidade; i++){
+                            recintosAtuais[0]['animaisExistentes'].push(animal)
+                            }
+                        } else {
+                            return { erro: "Não há recinto viável"}
+                        }
+                        
+                }
             }
-            if (animal == 'Macaco') {
-                animal = animais[3]
-                animal['tamanho'] = animal['tamanho'] * quantidade
-                console.log(animal)
-            }
-        }
+            let ocupacaoAtual = []
+            let espacoOcupado1 = 0
+            let espacoDisponivel1 = 0
+            let animaisDiferentes1 = []
+            let quantidadeDeAnimaisDiferentes1 = 0
+        
+                for (let i = 0; i < recintosAtuais.length; i++) {
+                    ocupacaoAtual[i] = recintosAtuais[i]['animaisExistentes']
+                }
+                for (let n = 0; n < ocupacaoAtual[0].length;n++) {
+                    animaisDiferentes1[n] = ocupacaoAtual[0][n]['animal']
+                    espacoOcupado1 = Number(espacoOcupado1+(ocupacaoAtual[0][n]['tamanho']))
+                }   
+                quantidadeDeAnimaisDiferentes1 = Array.from(new Set(animaisDiferentes1)).length-1
+                if(quantidadeDeAnimaisDiferentes1 != 0) {
+                    espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1 -1
+                } else {
+                    espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1
+                }
     }
 }
 
