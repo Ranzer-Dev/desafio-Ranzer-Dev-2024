@@ -82,35 +82,35 @@ class RecintosZoo {
         espacoDisponivel1 = 0
         animaisDiferentes1 = []
         quantidadeDeAnimaisDiferentes11 = 0
-    
-            for (let i = 0; i < recintosAtuais.length; i++) {
-                ocupacaoAtual[i] = recintosAtuais[i]['animaisExistentes']
+
+        for (let i = 0; i < recintosAtuais.length; i++) {
+            ocupacaoAtual[i] = recintosAtuais[i]['animaisExistentes']
+        }
+        for (let n = 0; n < ocupacaoAtual[0].length; n++) {
+            animaisDiferentes1[n] = ocupacaoAtual[0][n]['animal']
+            espacoOcupado1 = Number(espacoOcupado1 + (ocupacaoAtual[0][n]['tamanho']))
+        }
+        quantidadeDeAnimaisDiferentes11 = Array.from(new Set(animaisDiferentes1)).length - 1
+        if (quantidadeDeAnimaisDiferentes11 != 0) {
+            espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1 - 1
+        } else {
+            espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1
+        }
+
+        let podeSerTratado = animais.some(animais => animais.animal == animal);
+
+        if (podeSerTratado == false) {
+            console.log("Animal inválido");
+        } else if (podeSerTratado == true) {
+            if (quantidade < 1) {
+                console.log("Quantidade inválida");
             }
-            for (let n = 0; n < ocupacaoAtual[0].length;n++) {
-                animaisDiferentes1[n] = ocupacaoAtual[0][n]['animal']
-                espacoOcupado1 = Number(espacoOcupado1+(ocupacaoAtual[0][n]['tamanho']))
-            }   
-            quantidadeDeAnimaisDiferentes11 = Array.from(new Set(animaisDiferentes1)).length-1
-            if(quantidadeDeAnimaisDiferentes11 != 0) {
-                espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1 -1
-            } else {
-                espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1
+            if (animal == 'Macaco') {
+                animal = animais[3]
+                animal['tamanho'] = animal['tamanho'] * quantidade
+                console.log(animal)
             }
-    
-            let podeSerTratado = animais.some(animais => animais.animal == animal);
-                
-            if (podeSerTratado == false) {
-                console.log("Animal inválido");
-            } else if (podeSerTratado == true) {
-                if (quantidade < 1) {
-                    console.log("Quantidade inválida");
-                }
-                if (animal == 'Macaco') {
-                    animal = animais[3]
-                    animal['tamanho'] = animal['tamanho'] * quantidade
-                    console.log(animal)
-                }
-            }
+        }
     }
 }
 
