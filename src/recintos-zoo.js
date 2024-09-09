@@ -73,51 +73,52 @@ let recintosAtuais = [
     }
 ];
 
+let todosAnimaisDoRecinto = []
+let espacoOcupado = [] 
+
+for ( recinto of recintosAtuais){
+    todosAnimaisDoRecinto.push(recinto['animaisExistentes'])
+}
+for (let i = 0; i < todosAnimaisDoRecinto.length; i++ ){
+    for (let a = 0; a < todosAnimaisDoRecinto[i].length; a++ ){
+        if (espacoOcupado[i] == undefined){
+            espacoOcupado[i] = 0;
+        }
+        espacoOcupado[i] = espacoOcupado[i] + todosAnimaisDoRecinto[i][a]['tamanho']
+    }
+} 
+for (let recinto = 0; recinto < recintosAtuais.length; recinto++){
+    if(espacoOcupado[recinto] == undefined){
+        espacoOcupado[recinto] = 0
+    }
+    recintosAtuais[recinto].espacoLivre = recintosAtuais[recinto]['espacoTotal'] - espacoOcupado[recinto]
+}
+
 class RecintosZoo {
 
     analisaRecintos(animal, quantidade) {
-    
-            let podeSerTratado = animais.some(animais => animais.animal == animal);
-                
-            if (podeSerTratado == false) {
-                return { erro:"Animal inválido"};
-            } else if (podeSerTratado == true) {
-                if (quantidade < 1) {
-                    return { erro: "Quantidade inválida" }
-                }
-                if (animal == 'Macaco' && quantidade > 0) {
-                    animal = animais[3]
-                    tamanho = animal['tamanho'] * quantidade
-                        if (recintosAtuais[0]['bioma'] == 'savana' && tamanho <= espacoDisponivel1) {
-                            for(let i = 1; i <= quantidade; i++){
-                            recintosAtuais[0]['animaisExistentes'].push(animal)
-                            }
-                        } else {
-                            return { erro: "Não há recinto viável"}
-                        }
-                        
+
+        let podeSerTratado = animais.some(animais => animais.animal == animal);
+
+        if (podeSerTratado == false) {
+            return { erro: "Animal inválido" }
+        }
+        if (podeSerTratado == true) {
+            if (quantidade < 1) {
+                return { erro: "Quantidade inválida" };
+            }
+        } 
+        if (animal == "MACACO") {
+            animal = animais[3]
+            var tamanho1 = animal['tamanho'] * quantidade
+            for (let i = 0; i < recintosAtuais.length; i++) {
+                if (recintosAtuais[i]['espacoLivre'] < tamanho1) {
+                    return { erro: "Não há recinto viável" }
                 }
             }
-            let ocupacaoAtual = []
-            let espacoOcupado1 = 0
-            let espacoDisponivel1 = 0
-            let animaisDiferentes1 = []
-            let quantidadeDeAnimaisDiferentes1 = 0
-        
-                for (let i = 0; i < recintosAtuais.length; i++) {
-                    ocupacaoAtual[i] = recintosAtuais[i]['animaisExistentes']
-                }
-                for (let n = 0; n < ocupacaoAtual[0].length;n++) {
-                    animaisDiferentes1[n] = ocupacaoAtual[0][n]['animal']
-                    espacoOcupado1 = Number(espacoOcupado1+(ocupacaoAtual[0][n]['tamanho']))
-                }   
-                quantidadeDeAnimaisDiferentes1 = Array.from(new Set(animaisDiferentes1)).length-1
-                if(quantidadeDeAnimaisDiferentes1 != 0) {
-                    espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1 -1
-                } else {
-                    espacoDisponivel1 = recintosAtuais[0]['tamanhoTotal'] - espacoOcupado1
-                }
+        }
     }
 }
+
 
 export { RecintosZoo as RecintosZoo };
