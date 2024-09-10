@@ -1,4 +1,5 @@
 
+
 const biomas = {
     1: "savana",
     2: "floresta",
@@ -9,24 +10,27 @@ const biomas = {
     7: "taiga"
 }
 
-const animais = [
+let animais = [
     {
         animal: "LEAO",
         tamanho: 3,
-        bioma: biomas[1],
-        tipo: "carnivoro"
+        bioma: [biomas[1]],
+        tipo: "carnivoro",
+        familiaDoCanivoro: "felideos"
     },
     {
         animal: "LEOPARDO",
         tamanho: 2,
-        bioma: biomas[1],
-        tipo: "carnivoro"
+        bioma: [biomas[1]],
+        tipo: "carnivoro",
+        familiaDoCanivoro: "felideos"
     },
     {
         animal: "CROCODILO",
         tamanho: 3,
-        bioma: biomas[3],
-        tipo: "carnivoro"
+        bioma: [biomas[3]],
+        tipo: "carnivoro",
+        familiaDoCanivoro: "alligatoridae"
     },
     {
         animal: "MACACO",
@@ -36,7 +40,7 @@ const animais = [
     {
         animal: "GAZELA",
         tamanho: 2,
-        bioma: biomas[1]
+        bioma: [biomas[1]]
     },
     {
         animal: "HIPOPOTAMO",
@@ -46,7 +50,7 @@ const animais = [
 ];
 
 
-let recintosAtuais = [
+var recintosAtuais = [
     {
         numero: 1,
         bioma: [biomas[1]],
@@ -79,20 +83,26 @@ let recintosAtuais = [
     }
 ]
 
-let todosAnimaisDoRecinto = []
-let espacoOcupado = []
+var todosAnimaisDoRecinto = []
+var espacoOcupado = []
+// animaisDiferentes = []
 
 for (let recinto of recintosAtuais){
     todosAnimaisDoRecinto.push(recinto['animaisExistentes'])
 }
 for (let i = 0; i < todosAnimaisDoRecinto.length; i++ ){
     for (let a = 0; a < todosAnimaisDoRecinto[i].length; a++ ){
+        // animaisDiferentes[i] = Array.from(new Set(todosAnimaisDoRecinto[i]));
         if (espacoOcupado[i] == undefined){
             espacoOcupado[i] = 0;
         }
         espacoOcupado[i] = espacoOcupado[i] + todosAnimaisDoRecinto[i][a]['tamanho']
-        if(todosAnimaisDoRecinto[i][a]['tipo'] == 'carnivoro'){
-            recintosAtuais[i].temCarnivoro = todosAnimaisDoRecinto[i][a]['tipo']
+        if(todosAnimaisDoRecinto[i][a]['tipo'] == 'carnivoro' && todosAnimaisDoRecinto[i][a]['familiaDoCanivoro'] == 'felideos'){
+            recintosAtuais[i].dieta = todosAnimaisDoRecinto[i][a]['tipo']
+            recintosAtuais[i].familia = todosAnimaisDoRecinto[i][a]['familiaDoCanivoro']
+        } else if(todosAnimaisDoRecinto[i][a]['tipo'] == 'carnivoro' && todosAnimaisDoRecinto[i][a]['familiaDoCanivoro'] == 'alligatoridae'){
+            recintosAtuais[i].dieta = todosAnimaisDoRecinto[i][a]['tipo']
+            recintosAtuais[i].familia = todosAnimaisDoRecinto[i][a]['familiaDoCanivoro']
         }
     }
 } 
@@ -107,21 +117,22 @@ class RecintosZoo {
 
     analisaRecintos(animal, quantidade) {
 
-        let recintosViaveis = [];
-        let biomasDoAnimal = [];
+     var recintosViaveis = [];
+     var biomasDoAnimal = [];
+     var especiesDiferentes = [];
         let podeSerTratado = animais.some(animais => animais.animal == animal);
         
         if (podeSerTratado == false) {
-            return { erro:"Animal inválido"}
+            return {erro: "Animal inválido"}
         } else if (podeSerTratado == true) {
             if (quantidade < 1) {
-                return { erro: "Quantidade inválida"}
+                return {erro:  "Quantidade inválida"}
             } 
             if (animal == 'LEAO') {
                 animal = animais[0]
-                var tamanhoDosAnimais = animal['tamanho'] * quantidade
+                tamanhoDosAnimais = animal['tamanho'] * quantidade
                 biomasDoAnimal = animal['bioma']
-                var tipoDoAnimal =  animal['tipo']
+                tipoDoAnimal =  animal['tipo']
             }
             if (animal == 'LEOPARDO') {
                 animal = animais[1]
@@ -149,24 +160,34 @@ class RecintosZoo {
             }
             if (animal == 'HIPOPOTAMO') {
                 animal = animais[5]
-                tamanhoDosAnimais = animal['tamanho'] * quantidade
+                var tamanhoDosAnimais = animal['tamanho'] * quantidade
                 biomasDoAnimal = animal['bioma']
-                tipoDoAnimal =  animal['tipo']
+                var tipoDoAnimal =  animal['tipo']
             }
     
             for(let i = 0; i < recintosAtuais.length;i++){
                 if(recintosAtuais[i]['espacoLivre'] > tamanhoDosAnimais){
                     for(let a = 0; a < recintosAtuais[i]['bioma'].length; a++){
                         for(let b = 0; b < biomasDoAnimal.length; b++){
-                            if(recintosAtuais[i]['bioma'][a] == biomasDoAnimal[b] && tipoDoAnimal == recintosAtuais[i]['temCarnivoro'] ){
-                                    recintosViaveis.push(`Recinto ${recintosAtuais[i]['numero']} (espaço livre: ${recintosAtuais[i]['espacoLivre']-quantidade} total: ${recintosAtuais[i]['espacoTotal']})`)
+                            if(recintosAtuais[i]['bioma'][a] == biomasDoAnimal[b] && (tipoDoAnimal == recintosAtuais[i]['dieta'] || recintosAtuais[i]['espacoLivre'] - recintosAtuais[i]['espacoTotal'] == 0)){
+                                for(let c = 0; c < quantidade; c++){
+                                    recintosAtuais[i]['animaisExistentes'].push(animal)
+                                }
+                                    especiesDiferentes[i] = recintosAtuais[i]['animaisExistentes'].some(elemento => elemento.animal == animal['animal'])
+                                    recintosViaveis.push(`Recinto ${recintosAtuais[i]['numero']} (espaço livre: ${recintosAtuais[i]['espacoLivre']-tamanhoDosAnimais} total: ${recintosAtuais[i]['espacoTotal']})`)
+                                    recintosViaveis = Array.from(new Set(recintosViaveis))
                             }
                         }
                     }
                 }else{
-                    return { erro:"Não há recinto viável"}
+                    return {erro: "Não há recinto viável"}
                 }
             }
+            return {erro: recintosViaveis}
+    
+            console.log(recintosAtuais)
+    
+            console.log(especiesDiferentes)
         }
     }
 }
