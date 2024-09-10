@@ -1,8 +1,13 @@
+
 const biomas = {
     1: "savana",
     2: "floresta",
-    3: "rio"
-};
+    3: "rio",
+    4: "campos",
+    5: "deserto",
+    6: "tundra",
+    7: "taiga"
+}
 
 const animais = [
     {
@@ -26,7 +31,7 @@ const animais = [
     {
         animal: "MACACO",
         tamanho: 1,
-        bioma: biomas[1], bioma: biomas[2]
+        bioma: [biomas[1], biomas[2]]
     },
     {
         animal: "GAZELA",
@@ -36,47 +41,48 @@ const animais = [
     {
         animal: "HIPOPOTAMO",
         tamanho: 4,
-        bioma: biomas[1], bioma: biomas[3]
+        bioma: [biomas[1], biomas[3]]
     }
 ];
+
 
 let recintosAtuais = [
     {
         numero: 1,
-        bioma: biomas[1],
-        tamanhoTotal: 10,
-        animaisExistentens: [animais[3],animais[3],animais[3]],
+        bioma: [biomas[1]],
+        espacoTotal: 10,
+        animaisExistentes: [animais[3],animais[3],animais[3]],
     },
     {
         numero: 2,
-        bioma: biomas[2],
-        tamanhoTotal: 5,
-        animaisExistentens: [],
+        bioma: [biomas[2]],
+        espacoTotal: 5,
+        animaisExistentes: [],
     },
     {
         numero: 3,
         bioma: [biomas[1],biomas[3]],
-        tamanhoTotal: 7,
-        animaisExistentens: [animais[5]],
+        espacoTotal: 7,
+        animaisExistentes: [animais[4]],
     },
     {
         numero: 4,
-        bioma: biomas[3],
-        tamanhoTotal: 8,
-        animaisExistentens: [],
+        bioma: [biomas[3]],
+        espacoTotal: 8,
+        animaisExistentes: [],
     },
     {
         numero: 5,
-        bioma: biomas[1],
-        tamanhoTotal: 9,
-        animaisExistentens: [animais[1]],
+        bioma: [biomas[1]],
+        espacoTotal: 9,
+        animaisExistentes: [animais[1]]
     }
-];
+]
 
 let todosAnimaisDoRecinto = []
-let espacoOcupado = [] 
+let espacoOcupado = []
 
-for ( recinto of recintosAtuais){
+for (let recinto of recintosAtuais){
     todosAnimaisDoRecinto.push(recinto['animaisExistentes'])
 }
 for (let i = 0; i < todosAnimaisDoRecinto.length; i++ ){
@@ -85,6 +91,9 @@ for (let i = 0; i < todosAnimaisDoRecinto.length; i++ ){
             espacoOcupado[i] = 0;
         }
         espacoOcupado[i] = espacoOcupado[i] + todosAnimaisDoRecinto[i][a]['tamanho']
+        if(todosAnimaisDoRecinto[i][a]['tipo'] == 'carnivoro'){
+            recintosAtuais[i].temCarnivoro = todosAnimaisDoRecinto[i][a]['tipo']
+        }
     }
 } 
 for (let recinto = 0; recinto < recintosAtuais.length; recinto++){
@@ -98,22 +107,64 @@ class RecintosZoo {
 
     analisaRecintos(animal, quantidade) {
 
+        let recintosViaveis = [];
+        let biomasDoAnimal = [];
         let podeSerTratado = animais.some(animais => animais.animal == animal);
-
+        
         if (podeSerTratado == false) {
-            return { erro: "Animal inválido" }
-        }
-        if (podeSerTratado == true) {
+            return { erro:"Animal inválido"}
+        } else if (podeSerTratado == true) {
             if (quantidade < 1) {
-                return { erro: "Quantidade inválida" };
+                return { erro: "Quantidade inválida"}
+            } 
+            if (animal == 'LEAO') {
+                animal = animais[0]
+                var tamanhoDosAnimais = animal['tamanho'] * quantidade
+                biomasDoAnimal = animal['bioma']
+                var tipoDoAnimal =  animal['tipo']
             }
-        } 
-        if (animal == "MACACO") {
-            animal = animais[3]
-            var tamanho1 = animal['tamanho'] * quantidade
-            for (let i = 0; i < recintosAtuais.length; i++) {
-                if (recintosAtuais[i]['espacoLivre'] < tamanho1) {
-                    return { erro: "Não há recinto viável" }
+            if (animal == 'LEOPARDO') {
+                animal = animais[1]
+                tamanhoDosAnimais = animal['tamanho'] * quantidade
+                biomasDoAnimal = animal['bioma']
+                tipoDoAnimal =  animal['tipo']
+            }
+            if (animal == 'CROCODILO') {
+                animal = animais[2]
+                tamanhoDosAnimais = animal['tamanho'] * quantidade
+                biomasDoAnimal = animal['bioma']
+                tipoDoAnimal =  animal['tipo']
+            }
+            if (animal == 'MACACO') {
+                animal = animais[3]
+                tamanhoDosAnimais = animal['tamanho'] * quantidade
+                biomasDoAnimal = animal['bioma']
+                tipoDoAnimal =  animal['tipo']
+            }
+            if (animal == 'GAZELA') {
+                animal = animais[4]
+                tamanhoDosAnimais = animal['tamanho'] * quantidade
+                biomasDoAnimal = animal['bioma']
+                tipoDoAnimal =  animal['tipo']
+            }
+            if (animal == 'HIPOPOTAMO') {
+                animal = animais[5]
+                tamanhoDosAnimais = animal['tamanho'] * quantidade
+                biomasDoAnimal = animal['bioma']
+                tipoDoAnimal =  animal['tipo']
+            }
+    
+            for(let i = 0; i < recintosAtuais.length;i++){
+                if(recintosAtuais[i]['espacoLivre'] > tamanhoDosAnimais){
+                    for(let a = 0; a < recintosAtuais[i]['bioma'].length; a++){
+                        for(let b = 0; b < biomasDoAnimal.length; b++){
+                            if(recintosAtuais[i]['bioma'][a] == biomasDoAnimal[b] && tipoDoAnimal == recintosAtuais[i]['temCarnivoro'] ){
+                                    recintosViaveis.push(`Recinto ${recintosAtuais[i]['numero']} (espaço livre: ${recintosAtuais[i]['espacoLivre']-quantidade} total: ${recintosAtuais[i]['espacoTotal']})`)
+                            }
+                        }
+                    }
+                }else{
+                    return { erro:"Não há recinto viável"}
                 }
             }
         }
