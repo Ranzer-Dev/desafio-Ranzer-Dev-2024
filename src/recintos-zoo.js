@@ -1,5 +1,5 @@
 
-
+// dionario contendo os biomas possiveis não só os dentro do zoologico
 const biomas = {
     1: "savana",
     2: "floresta",
@@ -10,26 +10,28 @@ const biomas = {
     7: "taiga"
 };
 
+//declarendo animais que o zoologico tem condições de cuidar e suas especificações
+
 let animais = [
     {
         animal: "LEAO",
         tamanho: 3,
         bioma: [biomas[1]],
-        tipo: "carnivoro",
+        dieta: "carnivoro",
         familiaDoCanivoro: "felideos"
     },
     {
         animal: "LEOPARDO",
         tamanho: 2,
         bioma: [biomas[1]],
-        tipo: "carnivoro",
+        dieta: "carnivoro",
         familiaDoCanivoro: "felideos"
     },
     {
         animal: "CROCODILO",
         tamanho: 3,
         bioma: [biomas[3]],
-        tipo: "carnivoro",
+        dieta: "carnivoro",
         familiaDoCanivoro: "alligatoridae"
     },
     {
@@ -49,68 +51,81 @@ let animais = [
     }
 ];
 
+//recintos com o bioma que o zoologico tem e seus respectivos habitantes
 
-var recintosAtuais = [
+var recintosDoZoologico = [
     {
         numero: 1,
         bioma: [biomas[1]],
         espacoTotal: 10,
-        animaisExistentes: [animais[3],animais[3],animais[3]],
+        animaisNoRecinto: [animais[3],animais[3],animais[3]],
     },
     {
         numero: 2,
         bioma: [biomas[2]],
         espacoTotal: 5,
-        animaisExistentes: [],
+        animaisNoRecinto: [],
     },
     {
         numero: 3,
         bioma: [biomas[1],biomas[3]],
         espacoTotal: 7,
-        animaisExistentes: [animais[4]],
+        animaisNoRecinto: [animais[4]],
     },
     {
         numero: 4,
         bioma: [biomas[3]],
         espacoTotal: 8,
-        animaisExistentes: [],
+        animaisNoRecinto: [],
     },
     {
         numero: 5,
         bioma: [biomas[1]],
         espacoTotal: 9,
-        animaisExistentes: [animais[1]]
+        animaisNoRecinto: [animais[1]]
     }
 ];
 
-var todosAnimaisDoRecinto = [];
-var espacoOcupado = [];
-// animaisDiferentes = []
+// analise para criar propriedades unicas para cada recinto
+// dependendo do indivio que cada um comporta 
 
-for (let recinto of recintosAtuais){
-    todosAnimaisDoRecinto.push(recinto['animaisExistentes'])
+var animaisPorRecinto = [];
+var capacidadeOcupada = [];
+
+//isolando os animais de objeto recinto para variavel de array
+for (let recinto of recintosDoZoologico){
+    animaisPorRecinto.push(recinto['animaisNoRecinto'])
 }
-for (let i = 0; i < todosAnimaisDoRecinto.length; i++ ){
-    for (let a = 0; a < todosAnimaisDoRecinto[i].length; a++ ){
-        // animaisDiferentes[i] = Array.from(new Set(todosAnimaisDoRecinto[i]));
-        if (espacoOcupado[i] == undefined){
-            espacoOcupado[i] = 0;
+
+//laço de repetição aninhado que itera sobre cada animal no recinto para poder definir o 
+//tamanho disponivel no recinto para receber novos animais
+for (let i = 0; i < animaisPorRecinto.length; i++ ){
+
+    //atribuindo Zeros ao array capacidadeOcupada para ele não ficar vazio
+    //e não retornar NaN quando eu executar os calculos
+    for (let a = 0; a < animaisPorRecinto[i].length; a++ ){
+        if (capacidadeOcupada[i] == undefined){
+            capacidadeOcupada[i] = 0;
         }
-        espacoOcupado[i] = espacoOcupado[i] + todosAnimaisDoRecinto[i][a]['tamanho'];
-        if(todosAnimaisDoRecinto[i][a]['tipo'] == 'carnivoro' && todosAnimaisDoRecinto[i][a]['familiaDoCanivoro'] == 'felideos'){
-            recintosAtuais[i].dieta = todosAnimaisDoRecinto[i][a]['tipo'];
-            recintosAtuais[i].familia = todosAnimaisDoRecinto[i][a]['familiaDoCanivoro'];
-        } else if(todosAnimaisDoRecinto[i][a]['tipo'] == 'carnivoro' && todosAnimaisDoRecinto[i][a]['familiaDoCanivoro'] == 'alligatoridae'){
-            recintosAtuais[i].dieta = todosAnimaisDoRecinto[i][a]['tipo'];
-            recintosAtuais[i].familia = todosAnimaisDoRecinto[i][a]['familiaDoCanivoro'];
+        capacidadeOcupada[i] = capacidadeOcupada[i] + animaisPorRecinto[i][a]['tamanho'];
+            //adionando a familia do animal ao recinto (familias de carnivor diferentes tendem a rivalizar)
+        if(animaisPorRecinto[i][a]['dieta'] == 'carnivoro' && animaisPorRecinto[i][a]['familiaDoCanivoro'] == 'felideos'){
+            recintosDoZoologico[i].dieta = animaisPorRecinto[i][a]['dieta'];
+            recintosDoZoologico[i].familia = animaisPorRecinto[i][a]['familiaDoCanivoro'];
+        } else if(animaisPorRecinto[i][a]['dieta'] == 'carnivoro' && animaisPorRecinto[i][a]['familiaDoCanivoro'] == 'alligatoridae'){
+            recintosDoZoologico[i].dieta = animaisPorRecinto[i][a]['dieta'];
+            recintosDoZoologico[i].familia = animaisPorRecinto[i][a]['familiaDoCanivoro'];
         }
     }
 } 
-for (let recinto = 0; recinto < recintosAtuais.length; recinto++){
-    if(espacoOcupado[recinto] == undefined){
-        espacoOcupado[recinto] = 0
+//laço para adicionar a nova propriedade espacoLivre aos objetos recintosDoZoologico do zoologico
+for (let recinto = 0; recinto < recintosDoZoologico.length; recinto++){
+    //se o recinto não tem nenhum animal o valor retorna como vazio ou undefined
+    //tratamento para um dieta numero, já que ele vai guardar um dado numerico
+    if(capacidadeOcupada[recinto] == undefined){
+        capacidadeOcupada[recinto] = 0
     }
-    recintosAtuais[recinto].espacoLivre = recintosAtuais[recinto]['espacoTotal'] - espacoOcupado[recinto]
+    recintosDoZoologico[recinto].espacoLivre = recintosDoZoologico[recinto]['espacoTotal'] - capacidadeOcupada[recinto]
 }
 
 class RecintosZoo {
@@ -118,8 +133,13 @@ class RecintosZoo {
     analisaRecintos(animal, quantidade) {
 
         var recintosViaveis = [];
-        var biomasDoAnimal = [];
+        var habitats = [];
         var especiesDiferentes = [];
+        var dietaDoAnimal;
+        var tamanhoDosAnimais
+
+        //verifica se o animal adicionado ao parametro animal da função
+        //é igual a algum animal que o zoologico aceita no momento
         let podeSerTratado = animais.some(animais => animais.animal == animal);
     
         if (podeSerTratado == false) {
@@ -128,62 +148,78 @@ class RecintosZoo {
             if (quantidade < 1) {
                 return {erro: "Quantidade inválida"}
             }
+            //caso o zoologico aceite o animal informado ele atribui alguns dados adicionais
+            //e simplifica alguns já existentes
             if (animal == 'LEAO') {
                 animal = animais[0]
                 tamanhoDosAnimais = animal['tamanho'] * quantidade
-                biomasDoAnimal = animal['bioma']
-                tipoDoAnimal = animal['tipo']
+                habitats = animal['bioma']
+                dietaDoAnimal = animal['dieta']
             }
             if (animal == 'LEOPARDO') {
                 animal = animais[1]
                 tamanhoDosAnimais = animal['tamanho'] * quantidade
-                biomasDoAnimal = animal['bioma']
-                tipoDoAnimal = animal['tipo']
+                habitats = animal['bioma']
+                dietaDoAnimal = animal['dieta']
             }
             if (animal == 'CROCODILO') {
                 animal = animais[2]
                 tamanhoDosAnimais = animal['tamanho'] * quantidade
-                biomasDoAnimal = animal['bioma']
-                tipoDoAnimal = animal['tipo']
+                habitats = animal['bioma']
+                dietaDoAnimal = animal['dieta']
             }
             if (animal == 'MACACO') {
                 animal = animais[3]
                 tamanhoDosAnimais = animal['tamanho'] * quantidade
-                biomasDoAnimal = animal['bioma']
-                tipoDoAnimal = animal['tipo']
+                habitats = animal['bioma']
+                dietaDoAnimal = animal['dieta']
             }
             if (animal == 'GAZELA') {
                 animal = animais[4]
                 tamanhoDosAnimais = animal['tamanho'] * quantidade
-                biomasDoAnimal = animal['bioma']
-                tipoDoAnimal = animal['tipo']
+                habitats = animal['bioma']
+                dietaDoAnimal = animal['dieta']
             }
             if (animal == 'HIPOPOTAMO') {
                 animal = animais[5]
-                var tamanhoDosAnimais = animal['tamanho'] * quantidade
-                biomasDoAnimal = animal['bioma']
-                var tipoDoAnimal = animal['tipo']
+                tamanhoDosAnimais = animal['tamanho'] * quantidade
+                habitats = animal['bioma']
+                dietaDoAnimal = animal['dieta']
             }
     
-            for (let i = 0; i < recintosAtuais.length; i++) {
-                if (recintosAtuais[i]['espacoLivre'] > tamanhoDosAnimais) {
-                    for (let a = 0; a < recintosAtuais[i]['bioma'].length; a++) {
-                        for (let b = 0; b < biomasDoAnimal.length; b++) {
-                            if (recintosAtuais[i]['bioma'][a] == biomasDoAnimal[b] && (tipoDoAnimal == recintosAtuais[i]['dieta'] || recintosAtuais[i]['espacoLivre'] - recintosAtuais[i]['espacoTotal'] == 0)) {
+            //esses laços aninhado definem para qual recinto cada animal vai 
+            //de acordo com o exigido de cada um
+            for (let i = 0; i < recintosDoZoologico.length; i++) {
+                //verifica qual dos 5 recintos tem espaço disponivel para a quantidade informada
+                if (recintosDoZoologico[i]['espacoLivre'] > tamanhoDosAnimais) {
+                    //itera sobre cada bioma do Recinto
+                    for (let a = 0; a < recintosDoZoologico[i]['bioma'].length; a++) {
+                        //itera sobre cada bioma do Animal
+                        for (let b = 0; b < habitats.length; b++) {
+                            //essa comparação verifica se os dois laços acima são iguais
+                            //se a dieta do animal é a mesma que a do recinto
+                            //ou se o tem todo o espaço livre (se for ocupado e a dieta for carnivora ele procura um vazio)
+                            if (recintosDoZoologico[i]['bioma'][a] == habitats[b] && (dietaDoAnimal == recintosDoZoologico[i]['dieta'] || recintosDoZoologico[i]['espacoLivre'] - recintosDoZoologico[i]['espacoTotal'] == 0)) {
+                                //se recinto é compativel adiciono a quantidade de animais especificada ao recinto
                                 for (let c = 0; c < quantidade; c++) {
-                                    if (recintosAtuais[i]['animaisExistentes'].length != 0 || animal['animal'] == "MACACO" && tamanhoDosAnimais > 1) {
-                                        recintosAtuais[i]['animaisExistentes'].push(animal)
+                                    //Macaco não vive sozinho, se tem algum animal no recinto adicona macaco, 
+                                    //ou se forem dois macacos adicona macaco
+                                    //se não for macaco, só adiciona
+                                    if (recintosDoZoologico[i]['animaisNoRecinto'].length != 0 || animal['animal'] == "MACACO" && tamanhoDosAnimais > 1) {
+                                        recintosDoZoologico[i]['animaisNoRecinto'].push(animal)
                                     } else {
-                                        recintosAtuais[i]['animaisExistentes'].push(animal)
+                                        recintosDoZoologico[i]['animaisNoRecinto'].push(animal)
                                     }
                                 }
-                                especiesDiferentes[i] = recintosAtuais[i]['animaisExistentes'].some(elemento => elemento.animal != animal['animal'])
+                                //se o recinto tem mais de uma especie tira um espaço adicional, caso não se
+                                //for vazio não tira nada, caso contrario tira só o espaço que o animal ocupa
+                                especiesDiferentes[i] = recintosDoZoologico[i]['animaisNoRecinto'].some(elemento => elemento.animal != animal['animal'])
                                 if (especiesDiferentes[i] == true) {
-                                    recintosViaveis.push(`Recinto ${recintosAtuais[i]['numero']} (espaço livre: ${recintosAtuais[i]['espacoLivre'] - tamanhoDosAnimais - 1} total: ${recintosAtuais[i]['espacoTotal']})`)
-                                } else if (especiesDiferentes[i] == false && recintosAtuais[i]['animaisExistentes'].length == 0) {
-                                    recintosViaveis.push(`Recinto ${recintosAtuais[i]['numero']} (espaço livre: ${recintosAtuais[i]['espacoLivre']} total: ${recintosAtuais[i]['espacoTotal']})`)
+                                    recintosViaveis.push(`Recinto ${recintosDoZoologico[i]['numero']} (espaço livre: ${recintosDoZoologico[i]['espacoLivre'] - tamanhoDosAnimais - 1} total: ${recintosDoZoologico[i]['espacoTotal']})`)
+                                } else if (recintosDoZoologico[i]['animaisNoRecinto'].length == 0) {
+                                    recintosViaveis.push(`Recinto ${recintosDoZoologico[i]['numero']} (espaço livre: ${recintosDoZoologico[i]['espacoLivre']} total: ${recintosDoZoologico[i]['espacoTotal']})`)
                                 } else {
-                                    recintosViaveis.push(`Recinto ${recintosAtuais[i]['numero']} (espaço livre: ${recintosAtuais[i]['espacoLivre'] - tamanhoDosAnimais} total: ${recintosAtuais[i]['espacoTotal']})`)
+                                    recintosViaveis.push(`Recinto ${recintosDoZoologico[i]['numero']} (espaço livre: ${recintosDoZoologico[i]['espacoLivre'] - tamanhoDosAnimais} total: ${recintosDoZoologico[i]['espacoTotal']})`)
                                 }
                             }
                         }
