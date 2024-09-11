@@ -193,7 +193,7 @@ class RecintosZoo {
                 }
                 
             }
-            return {erro: recintosViaveis}
+            return {recintosViaveis: recintosViaveis}
         }
     }
 }
